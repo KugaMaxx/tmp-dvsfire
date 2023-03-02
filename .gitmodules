@@ -1,0 +1,3 @@
+[submodule "extern/dvstoolkit"]
+	path = extern/dvstoolkit
+	url = https://github.com/KugaMaxx/taro-dvstoolkit.git

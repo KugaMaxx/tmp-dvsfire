@@ -1,25 +1,18 @@
 #ifndef EDN_H
 #define EDN_H
 
+#include "dvs.hpp"
+
 #include <vector>
 #include <stdlib.h>
 #include <iostream>
+
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
 
 namespace py = pybind11;
-namespace dv {
-    struct Event {
-        uint64_t ts;
-        int16_t x;
-        int16_t y;
-        int8_t  p;
-        
-        Event(uint64_t ts_, uint16_t x_, uint16_t y_, bool p_) : ts(ts_), x(x_), y(y_), p(2 * p_ - 1) {}
-    };
-}
 
 namespace edn {
     class EventDenoisor {
@@ -36,7 +29,20 @@ namespace edn {
     public:
         EventDenoisor(uint16_t sizeX, uint16_t sizeY) : sizeX(sizeX), sizeY(sizeY) {};
         virtual ~EventDenoisor() {};
-        virtual std::vector<bool> initialization(py::array_t<uint64_t> arrts, py::array_t<uint16_t> arrx, py::array_t<uint16_t> arry, py::array_t<bool> arrp);
+        std::vector<bool> initialize(dvs::arrTs ts, dvs::arrX x, dvs::arrY y, dvs::arrP p) {
+            py::buffer_info bufp = p.request(), bufx = x.request(), bufy = y.request(), bufts = ts.request();
+	        assert(bufx.size == bufy.size && bufy.size == bufp.size && bufp.size == bufts.size);
+            
+            evlen = bufts.size;
+            ptrts = static_cast<uint64_t *> (bufts.ptr);
+            ptrx  = static_cast<uint16_t *> (bufx.ptr);
+            ptry  = static_cast<uint16_t *> (bufy.ptr);
+            ptrp  = static_cast<bool *> (bufp.ptr);
+
+	        std::vector<bool> vec(evlen, false);
+
+	        return vec;
+        }
     };
 
     class ReclusiveEventDenoisor : public EventDenoisor {
@@ -82,7 +88,7 @@ namespace edn {
         ReclusiveEventDenoisor(uint16_t sizeX, uint16_t sizeY, std::tuple<float, float, float> params);
         void updateStateSpace(float *Xt, float *Yt, float *Ut);
         void fastDericheBlur(float *Yt);
-        py::array_t<bool> run(py::array_t<uint64_t> arrts, py::array_t<uint16_t> arrx, py::array_t<uint16_t> arry, py::array_t<bool> arrp);
+        py::array_t<bool> run(dvs::arrTs ts, dvs::arrX x, dvs::arrY y, dvs::arrP p);
     };
 }
 

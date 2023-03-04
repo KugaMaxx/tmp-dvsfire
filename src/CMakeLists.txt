@@ -11,5 +11,11 @@ include_directories(${BLAS_INCLUDE_DIRS})
 # Pybind11
 find_package(pybind11 REQUIRED)
 
+# opencv
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 # Subdirectory
+include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(_filter)
+add_subdirectory(_detector)

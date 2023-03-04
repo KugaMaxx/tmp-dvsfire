@@ -1,3 +1,6 @@
+#include "edn.hpp"
+#include "dvs.hpp"
+
 #include <math.h>
 #include <time.h>
 #include <vector>
@@ -10,10 +13,8 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
-#include "edn.hpp"
 
 namespace py = pybind11;
-
 
 edn::ReclusiveEventDenoisor::ReclusiveEventDenoisor(uint16_t sizeX, uint16_t sizeY, std::tuple<float, float, float> params) : EventDenoisor(sizeX, sizeY) {
     std::tie(nThres, sigmaT, sigmaS) = params;
@@ -293,8 +294,8 @@ void edn::ReclusiveEventDenoisor::fastDericheBlur(float *Yt) {
     return;
 }
 
-py::array_t<bool> edn::ReclusiveEventDenoisor::run(py::array_t<uint64_t> arrts, py::array_t<uint16_t> arrx, py::array_t<uint16_t> arry, py::array_t<bool> arrp) {
-    std::vector<bool> vec = edn::EventDenoisor::initialization(arrts, arrx, arry, arrp);
+py::array_t<bool> edn::ReclusiveEventDenoisor::run(dvs::arrTs ts, dvs::arrX x, dvs::arrY y, dvs::arrP p) {
+    std::vector<bool> vec = edn::EventDenoisor::initialize(ts, x, y, p);
 
     bool initState = initStateCof();
     bool initDeriche = initDericheCof();
@@ -305,7 +306,7 @@ py::array_t<bool> edn::ReclusiveEventDenoisor::run(py::array_t<uint64_t> arrts, 
     float *Ut = (float *) calloc(1       * _LENGTH_, sizeof(float));
 
     for (size_t i = 0; i < evlen; i++) {
-        dv::Event event(ptrts[i], ptrx[i], ptry[i], ptrp[i]);
+        dvs::Event event(ptrts[i], ptrx[i], ptry[i], ptrp[i]);
         uint32_t ind = event.x * procY + event.y;
 
         if (event.ts - t0 >= sampleT) {
@@ -325,4 +326,11 @@ py::array_t<bool> edn::ReclusiveEventDenoisor::run(py::array_t<uint64_t> arrts, 
     free(Ut);
 
     return py::cast(vec);
+}
+
+PYBIND11_MODULE(eventdenoisor, m)
+{
+	py::class_<edn::ReclusiveEventDenoisor>(m, "reclusive_event_denoisor")
+		.def(py::init<uint16_t, uint16_t, std::tuple<float, float, float>>())
+		.def("run", &edn::ReclusiveEventDenoisor::run);
 }

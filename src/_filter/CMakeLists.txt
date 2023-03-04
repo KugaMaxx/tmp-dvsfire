@@ -1,5 +1,5 @@
 # find all source files in a directory
-aux_source_directory(${PROJECT_SOURCE_DIR}/_filter DIR_SRCS)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} DIR_SRCS)
 
 # convert to .so file
 pybind11_add_module(eventdenoisor ${DIR_SRCS})

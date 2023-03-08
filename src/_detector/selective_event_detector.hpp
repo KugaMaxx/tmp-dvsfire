@@ -7,11 +7,12 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include <dv-sdk/module.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
-#include <opencv2/core.hpp>
-#include <opencv2/opencv.hpp>
 
 
 namespace py = pybind11;
@@ -21,7 +22,9 @@ namespace edt {
 class SelectiveDetector : public EventDetector {
 public:
     float threshold;
-    cv::Mat eventBinaryFrame;
+    float maxRectNum = 20;
+    float minRectArea = 10;
+    cv::Mat binaryImg;
 
     struct RegionSet {
         size_t ind  = 0;
@@ -90,6 +93,36 @@ public:
         }
         return;
     };
+
+    std::vector<std::pair<int32_t, cv::Rect>> selectiveBoundingBox() {
+        for (size_t i = 0; i < S.size; i++) {
+            for (size_t j = i + 1; j < S.size; j++) {
+                if (calcSimularity(i, j) >= threshold) {
+                    S.group(i, j);
+                }
+            }
+        }
+
+        std::map<int32_t, cv::Rect> rects;
+        for (size_t i = 0; i < S.size; i++) {
+            int k = S.find(i);
+            if (!rects.count(k)) {
+                rects[k] = S.rect[i];
+                continue;
+            }
+            rects[k] |= S.rect[i];
+        }
+
+        std::vector<std::pair<int32_t, cv::Rect>> rankedRect;
+        for (size_t i = 0; i < rects.size(); i++) {
+            rankedRect.push_back(std::make_pair(i, rects[i]));
+        }
+        std::sort(rankedRect.begin(), rankedRect.end(), [](auto &left, auto &right) {
+            return left.second.area() > right.second.area();
+        });
+
+        return rankedRect;
+    }
 
     inline float_t calcSimularity(int i, int j) {
         // calculate intersect

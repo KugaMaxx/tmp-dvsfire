@@ -71,9 +71,6 @@ public:
         }
 
         /* initialize deriche blur filter parameters */
-        float_t scale = 1.0000 / (sqrt(2 * M_PI) * sigmaS);
-        a0 *= scale, a1 *= scale, b0 *= scale, b1 *= scale;
-
         n0 = a1 + a0;
         n1 = exp(k1/sigmaS)          * (b1*sin(w1/sigmaS)-(a1+2*a0)*cos(w1/sigmaS)) + exp(k0/sigmaS) * (b0*sin(w0/sigmaS) - (a0+2*a1) * cos(w0/sigmaS));
         n2 = 2 * exp((k0+k1)/sigmaS) * ((a0+a1)*cos(w1/sigmaS)*cos(w0/sigmaS) - b0*cos(w1/sigmaS)*sin(w0/sigmaS) - b1*cos(w0/sigmaS)*sin(w1/sigmaS)) + a1 * exp(2*k0/sigmaS) + a0 * exp(2*k1/sigmaS);
@@ -95,7 +92,7 @@ public:
         
         // Yt = C * Xt
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                    1, _LENGTH_, _POLES_, 1., C, _POLES_, Xt, _LENGTH_, 0., Yt, _LENGTH_);
+                    1, _LENGTH_, _POLES_, 2.5, C, _POLES_, Xt, _LENGTH_, 0., Yt, _LENGTH_);
         
         // expmABU = expm(A) * B * Ut
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 

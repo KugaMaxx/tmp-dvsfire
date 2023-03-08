@@ -19,22 +19,25 @@ model = edn.reclusive_event_denoisor(data['size'][0], data['size'][1], (1.2, 1.,
 # idx = data['events'].hotpixel(data['size'], thres=1000)
 # data['events'] = data['events'][idx]
 
-# st = time.time()
-# idx = model.run(data['events'])
-# data['events'] = data['events'][idx]
-# print(idx.sum())
+st = time.time()
+idx = model.run(data['events'])
+data['events'] = data['events'][idx]
+print(idx.sum())
 
-detector = edt.selective_detector(data['size'][0], data['size'][1], 0.7)
-for ts, ev in data['events'].slice('25ms'):
-    rects = detector.run(ev)
+# detector = edt.selective_detector(data['size'][0], data['size'][1], 0.7)
+# for ts, ev in data['events'].slice('25ms'):
+#     st = time.time()
+#     rects = detector.run(ev)
+#     print(time.time() - st)
+
+#     img = ev.project(data['size']).astype(np.uint8)
+#     img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+#     for x, y, w, h in rects:
+#         cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0))
     
-    img = ev.project(data['size']).astype(np.uint8)
-    img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)    
-    for x, y, w, h in rects:
-        cv2.rectangle(img, (x, y), (x+w, x+h), (0, 255, 0), 2)
+#     cv2.namedWindow('result', cv2.WINDOW_FREERATIO) 
+#     cv2.imshow('result', img)
+#     cv2.waitKey(0)
 
-    cv2.imshow('result', img)
-    cv2.waitKey(0)
-
-    breakpoint()
+#     breakpoint()
 

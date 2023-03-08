@@ -39,17 +39,6 @@ struct Event {
 using EventPybind = py::array_t<Event>;
 using EventPacket = std::vector<Event>;
 
-EventPacket toEventOutput(const EventPybind &in) {
-    py::buffer_info buf = in.request();
-    Event *ptr = static_cast<Event *> (buf.ptr);
-    
-    EventPacket events(buf.size);
-    for (size_t i = 0; i < buf.size; i++) {
-        events[i] = ptr[i];
-    }
-    return events;
-}
-
 }
 
 #endif

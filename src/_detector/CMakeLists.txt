@@ -1,9 +1,9 @@
-# find all source files in a directory
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} DIR_SRCS)
+# Compile module to dv runtime
+# add_library(reclusive_filter SHARED module_dv.cpp)
+# set_target_properties(reclusive_filter PROPERTIES PREFIX "Kuga_")
+# target_link_libraries(reclusive_filter PUBLIC ${BLAS_LIBRARIES} dv::sdk pybind11::module)
+# install(TARGETS reclusive_filter DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-# convert to .so file
-pybind11_add_module(eventdetector ${DIR_SRCS})
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
-
-# link to opencv
-target_link_libraries(eventdetector PRIVATE ${OpenCV_LIBRARIES})
+# Convert module to python package
+pybind11_add_module(event_detector module_py.cpp)
+target_link_libraries(event_detector PUBLIC ${OpenCV_LIBRARIES} dv::sdk pybind11::module)

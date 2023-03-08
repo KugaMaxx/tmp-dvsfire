@@ -102,10 +102,3 @@ std::vector<py::array_t<int32_t>> efd::SelectiveDetector::process(dvs::arrTs ts,
 
     return result;
 }
-
-PYBIND11_MODULE(eventdetector, m)
-{
-	py::class_<efd::SelectiveDetector>(m, "selective_detector")
-		.def(py::init<uint16_t, uint16_t, float>())
-		.def("process", &efd::SelectiveDetector::process);
-}

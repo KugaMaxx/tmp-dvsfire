@@ -34,8 +34,9 @@ private:
         auto rankedRect = selectiveBoundingBox();
 
         cv::RNG_MT19937 rng(1225);
-        for (size_t i = 0; i < maxRectNum; i++) {
+        for (size_t i = 0; i < rankedRect.size(); i++) {
             auto rect = rankedRect[i].second;
+            if (i > maxRectNum) break;
             if (rect.area() < minRectArea) continue;
             cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
             cv::rectangle(frame, rect.tl(), rect.br(), color, lineWidth);

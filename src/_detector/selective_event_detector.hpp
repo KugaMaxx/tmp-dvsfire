@@ -27,29 +27,35 @@ public:
     cv::Mat binaryImg;
 
     struct RegionSet {
-        size_t ind  = 0;
-        size_t size = 0;
+    private:
+        size_t _ind  = 0;
+        size_t _size = 0;
+    public:
         std::vector<cv::Rect>    rect;
         std::vector<cv::Point2f> center;
         std::vector<float_t>     radius;
         std::vector<uint32_t>    rank;
         std::vector<uint32_t>    label;
+
+        size_t size() {
+            return _size;
+        }
         
         RegionSet(){};
-        RegionSet(size_t length) : size(length), ind(0) {
-            rect.resize(size);
-            center.resize(size);
-            radius.resize(size);
-            rank.resize(size);
-            label.resize(size);
+        RegionSet(size_t length) : _size(length), _ind(0) {
+            rect.resize(_size);
+            center.resize(_size);
+            radius.resize(_size);
+            rank.resize(_size);
+            label.resize(_size);
         }
 
         inline void push_back(const cv::Rect& rect_, const cv::Point2f center_, const float radius_) {
-            rect[ind]   = rect_;
-            center[ind] = center_;
-            radius[ind] = radius_;
-            label[ind]  = ind;
-            ind++;
+            rect[_ind]   = rect_;
+            center[_ind] = center_;
+            radius[_ind] = radius_;
+            label[_ind]  = _ind;
+            _ind++;
         }
 
         inline int find(int i) {
@@ -95,8 +101,8 @@ public:
     };
 
     std::vector<std::pair<int32_t, cv::Rect>> selectiveBoundingBox() {
-        for (size_t i = 0; i < S.size; i++) {
-            for (size_t j = i + 1; j < S.size; j++) {
+        for (size_t i = 0; i < S.size(); i++) {
+            for (size_t j = i + 1; j < S.size(); j++) {
                 if (calcSimularity(i, j) >= threshold) {
                     S.group(i, j);
                 }
@@ -104,7 +110,7 @@ public:
         }
 
         std::map<int32_t, cv::Rect> rects;
-        for (size_t i = 0; i < S.size; i++) {
+        for (size_t i = 0; i < S.size(); i++) {
             int k = S.find(i);
             if (!rects.count(k)) {
                 rects[k] = S.rect[i];

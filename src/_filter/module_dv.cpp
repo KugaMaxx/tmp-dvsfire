@@ -18,9 +18,9 @@ public:
     };
 
 	static void initConfigOptions(dv::RuntimeConfig &config) {
-        config.add("sigmaT",    dv::ConfigOption::floatOption("Time sigma /ms.",       2.0, 0.1, 10.0));
-        config.add("sigmaS",    dv::ConfigOption::floatOption("Spatial sigma /pixel.", 1.0, 0.1, 9.0));
-        config.add("threshold", dv::ConfigOption::floatOption("Threshold value.",      1.0, 0.0, 10.0));
+        config.add("sigmaT",    dv::ConfigOption::floatOption("Time sigma (* 0.1/ms).",     1.0, 0.001, 10.0));
+        config.add("sigmaS",    dv::ConfigOption::floatOption("Spatial blur coefficient.",  1.0, 0.1, 10.0));
+        config.add("threshold", dv::ConfigOption::floatOption("Threshold value.",           1.0, 0.0, 5.0));
 
         config.setPriorityOptions({"sigmaT", "sigmaS", "threshold"});
     };

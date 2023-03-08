@@ -33,7 +33,7 @@ public:
     float_t *Ut;
 
     int64_t lastTimestamp = INT64_MAX;
-    float_t samplarT = 1000.;
+    float_t samplarT = 100000.;
     float_t A[_POLES_ * _POLES_] = {
         -0.348174256797851, -0.101759749190219, -0.0132846052724056, -0.000841996822694814, 
         1.               ,  0.               ,  0.                ,  0.                  ,
@@ -64,13 +64,13 @@ public:
     float_t m1, m2, m3, m4;
 
     void setCoefficient() {
-        /* initialize state space filter parameters */
+        // initialize state space filter parameters
         samplarT = samplarT * (sigmaT / 1.);
         for (size_t i = 0; i < _POLES_; i++) {
             expmAB[i] = *(expmA + i * _POLES_);
         }
 
-        /* initialize deriche blur filter parameters */
+        // initialize deriche blur filter parameters
         n0 = a1 + a0;
         n1 = exp(k1/sigmaS)          * (b1*sin(w1/sigmaS)-(a1+2*a0)*cos(w1/sigmaS)) + exp(k0/sigmaS) * (b0*sin(w0/sigmaS) - (a0+2*a1) * cos(w0/sigmaS));
         n2 = 2 * exp((k0+k1)/sigmaS) * ((a0+a1)*cos(w1/sigmaS)*cos(w0/sigmaS) - b0*cos(w1/sigmaS)*sin(w0/sigmaS) - b1*cos(w0/sigmaS)*sin(w1/sigmaS)) + a1 * exp(2*k0/sigmaS) + a0 * exp(2*k1/sigmaS);

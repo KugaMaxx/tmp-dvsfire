@@ -30,27 +30,13 @@ public:
         auto rankedRect = selectiveBoundingBox();
 
         std::vector<py::array_t<int32_t>> result;
-        for (size_t i = 0; i < maxRectNum; i++) {
+        for (size_t i = 0; i < rankedRect.size(); i++) {
             auto rect = rankedRect[i].second;
+            if (i > maxRectNum) break;
             if (rect.area() < minRectArea) continue;
             std::vector<int32_t> vect = {rect.x, rect.y, rect.width, rect.height};
             result.push_back(py::cast(vect));
         }
-
-        // // convert to three channels
-        // std::vector<cv::Mat> channels{binaryImg, binaryImg, binaryImg};
-        // cv::merge(channels, binaryImg);
-                
-        // cv::RNG_MT19937 rng(12345);
-        // for (auto& r : rankedRect ) {
-        //     cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-        //     cv::rectangle(binaryImg, r.second.tl(), r.second.br(), color);
-        // }
-
-        // // visualize
-        // cv::namedWindow("Display Image", cv::WINDOW_NORMAL);
-        // cv::imshow("Display Image", binaryImg);
-        // cv::waitKey(0);
 
         return result;
     };

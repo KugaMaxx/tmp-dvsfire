@@ -9,8 +9,7 @@ from modules import kore
 from modules import event_denoisor as edn
 from modules import event_detector as edt
 
-# import matplotlib.pyplot as plt
-# import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 
 # nThres, sigmaT, sigmaS
 data = DvsFile.load('./data/demo/aedat/s04_v05_c001.aedat4')
@@ -21,7 +20,7 @@ model = edn.reclusive_event_denoisor(data['size'][0], data['size'][1], (1.2, 1.,
 
 st = time.time()
 idx = model.run(data['events'])
-data['events'] = data['events'][idx]
+# data['events'] = data['events'][idx]
 print(idx.sum())
 
 # detector = edt.selective_detector(data['size'][0], data['size'][1], 0.7)
@@ -41,3 +40,7 @@ print(idx.sum())
 
 #     breakpoint()
 
+img = data['events'].project(data['size'])
+img = img / ((data['events'].timestamp[-1] - data['events'].timestamp[0]) * 1E-6)
+plt.imshow(img, vmin=0, vmax=10)
+plt.show()

@@ -25,7 +25,7 @@ public:
         Xt = (float_t *) calloc(_POLES_ * _LENGTH_, sizeof(float_t));
         Yt = (float_t *) calloc(1       * _LENGTH_, sizeof(float_t));
         Ut = (float_t *) calloc(1       * _LENGTH_, sizeof(float_t));
-
+        
         std::vector<bool> vec;
         vec.reserve(inEvent.size());
         for (auto &evt : inEvent){

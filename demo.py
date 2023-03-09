@@ -13,15 +13,25 @@ import matplotlib.pyplot as plt
 
 # nThres, sigmaT, sigmaS
 data = DvsFile.load('./data/demo/aedat/s04_v05_c001.aedat4')
-model = edn.reclusive_event_denoisor(data['size'][0], data['size'][1], (1.2, 1., 0.7))
+
+# Access dimensions of the event stream
+height, width = data['size']
+
+data['events'] = data['events'][:10000]
+
+projected_events = data['events'].project(data['size'])
+plt.imshow(projected_events, vmin=-1, vmax=1, cmap=plt.set_cmap('bwr'))
+plt.show()
+
+# model = edn.reclusive_event_denoisor(data['size'][0], data['size'][1], (1.2, 1., 0.7))
 
 # idx = data['events'].hotpixel(data['size'], thres=1000)
 # data['events'] = data['events'][idx]
 
-st = time.time()
-idx = model.run(data['events'])
+# st = time.time()
+# idx = model.run(data['events'])
 # data['events'] = data['events'][idx]
-print(idx.sum())
+# print(idx.sum())
 
 # detector = edt.selective_detector(data['size'][0], data['size'][1], 0.7)
 # for ts, ev in data['events'].slice('25ms'):
@@ -40,7 +50,7 @@ print(idx.sum())
 
 #     breakpoint()
 
-img = data['events'].project(data['size'])
-img = img / ((data['events'].timestamp[-1] - data['events'].timestamp[0]) * 1E-6)
-plt.imshow(img, vmin=0, vmax=10)
-plt.show()
+# img = data['events'].project(data['size'])
+# img = img / ((data['events'].timestamp[-1] - data['events'].timestamp[0]) * 1E-6)
+# plt.imshow(img, vmin=0, vmax=10)
+# plt.show()

@@ -32,17 +32,18 @@ def transform_frame(aps_frame):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="paramters")
+    parser.add_argument('-f', '--file',    default='./data/demo')
     parser.add_argument('-r', '--replace', action='store_false')
     parser.add_argument('-ev', '--events', action='store_false')
     parser.add_argument('-fr', '--frames', action='store_false')
     parser.add_argument('-hy', '--hybrid', action='store_false')
     args = parser.parse_args()
     
-    cwd = osp.dirname(__file__)
-    output = create(osp.join(cwd, './image_set'))
+    cwd = args.file
+    output = create(osp.join(cwd, 'image_set'))
 
     fig, cmap = plt.figure(), mcolors.LinearSegmentedColormap.from_list('custom', ['#00FF00', '#000000', '#FF0000'])
-    for root, dirs, files in os.walk(osp.join(cwd, './aedat'), topdown=False):
+    for root, dirs, files in os.walk(osp.join(cwd, 'aedat'), topdown=False):
         files.sort()
         for file in tqdm(files):
             name, ext = osp.splitext(file)

@@ -1,4 +1,5 @@
 build/
+image_set
 __pycache__
 .vscode/
 .history/

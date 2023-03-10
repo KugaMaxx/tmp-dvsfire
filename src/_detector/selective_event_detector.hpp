@@ -20,9 +20,9 @@ namespace edt {
 
     class SelectiveDetector : public EventDetector {
     public:
-        float threshold;
-        float maxRectNum  = 20;
-        float minRectArea = 10;
+        int16_t maxRectNum;
+        int16_t minRectArea;
+        float_t threshold;
         cv::Mat binaryImg;
 
         struct RegionSet {
@@ -121,6 +121,8 @@ namespace edt {
 
             std::vector<std::pair<int32_t, cv::Rect>> rankedRect;
             for (size_t i = 0; i < rects.size(); i++) {
+                if (rects[i].area() < minRectArea)
+                    continue;
                 rankedRect.push_back(std::make_pair(i, rects[i]));
             }
             std::sort(rankedRect.begin(), rankedRect.end(), [](auto &left, auto &right) {

@@ -4,14 +4,17 @@ namespace kpy {
 
     class SelectiveDetector : public edt::SelectiveDetector {
     public:
-        SelectiveDetector(int16_t sizeX_, int16_t sizeY_, float_t threshold_) {
-            sizeX     = sizeX_;
-            sizeY     = sizeY_;
-            _LENGTH_  = sizeX * sizeY;
-            threshold = threshold_;
+        SelectiveDetector(int16_t sizeX_, int16_t sizeY_) {
+            sizeX    = sizeX_;
+            sizeY    = sizeY_;
+            _LENGTH_ = sizeX * sizeY;
         };
 
-        std::vector<py::array_t<int32_t>> run(const kore::EventPybind &input) {
+        std::vector<py::array_t<int32_t>> run(const kore::EventPybind &input, const int16_t maxRectNum_, const int16_t minRectArea_, const float_t threshold_) {
+            maxRectNum  = maxRectNum_;
+            minRectArea = minRectArea_;
+            threshold   = threshold_;
+
             py::buffer_info buf = input.request();
             kore::Event *ptr    = static_cast<kore::Event *>(buf.ptr);
 
@@ -33,8 +36,6 @@ namespace kpy {
                 auto rect = rankedRect[i].second;
                 if (i > maxRectNum)
                     break;
-                if (rect.area() < minRectArea)
-                    continue;
                 std::vector<int32_t> vect = {rect.x, rect.y, rect.width, rect.height};
                 result.push_back(py::cast(vect));
             }
@@ -47,6 +48,6 @@ namespace kpy {
 
 PYBIND11_MODULE(event_detector, m) {
     py::class_<kpy::SelectiveDetector>(m, "selective_detector")
-        .def(py::init<int16_t, int16_t, float>())
-        .def("run", &kpy::SelectiveDetector::run);
+        .def(py::init<int16_t, int16_t>())
+        .def("run", &kpy::SelectiveDetector::run, py::arg("input"), py::arg("num") = 5, py::arg("area") = 10, py::arg("threshold") = 0.85);
 }

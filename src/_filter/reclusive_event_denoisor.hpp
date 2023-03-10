@@ -20,9 +20,9 @@ namespace edn {
 
     class ReclusiveEventDenoisor : public EventDenoisor {
     public:
-        float_t sigmaT    = 1.2;
-        float_t sigmaS    = 1.0;
-        float_t threshold = 0.7;
+        float_t sigmaS;
+        float_t sigmaT;
+        float_t threshold;
 
         static const size_t _POLES_  = 4;
         static const size_t _THREAD_ = 8;
@@ -32,7 +32,7 @@ namespace edn {
         float_t *Ut;
 
         int64_t lastTimestamp        = INT64_MAX;
-        float_t samplarT             = 100000.;
+        float_t samplarT             = 10000.;
         float_t A[_POLES_ * _POLES_] = {
             -0.348174256797851, -0.101759749190219, -0.0132846052724056, -0.000841996822694814, //
             1., 0., 0., 0.,                                                                     //
@@ -64,12 +64,15 @@ namespace edn {
 
         void setCoefficient() {
             // initialize state space filter parameters
-            samplarT = samplarT * (sigmaT / 1.);
+            samplarT = samplarT * pow(10, sigmaT);
             for (size_t i = 0; i < _POLES_; i++) {
                 expmAB[i] = *(expmA + i * _POLES_);
             }
 
             // initialize deriche blur filter parameters
+            float_t scale = 1 / (sqrt(2 * M_PI) * sigmaS);
+            a0 *= scale, a1 *= scale, b0 *= scale, b1 *= scale;
+
             n0 = a1 + a0;
             n1 = exp(k1 / sigmaS) * (b1 * sin(w1 / sigmaS) - (a1 + 2 * a0) * cos(w1 / sigmaS)) + exp(k0 / sigmaS) * (b0 * sin(w0 / sigmaS) - (a0 + 2 * a1) * cos(w0 / sigmaS));
             n2 = 2 * exp((k0 + k1) / sigmaS) * ((a0 + a1) * cos(w1 / sigmaS) * cos(w0 / sigmaS) - b0 * cos(w1 / sigmaS) * sin(w0 / sigmaS) - b1 * cos(w0 / sigmaS) * sin(w1 / sigmaS)) + a1 * exp(2 * k0 / sigmaS) + a0 * exp(2 * k1 / sigmaS);
@@ -91,7 +94,7 @@ namespace edn {
 
             // Yt = C * Xt
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                        1, _LENGTH_, _POLES_, 2.5, C, _POLES_, Xt, _LENGTH_, 0., Yt, _LENGTH_);
+                        1, _LENGTH_, _POLES_, 1., C, _POLES_, Xt, _LENGTH_, 0., Yt, _LENGTH_);
 
             // expmABU = expm(A) * B * Ut
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
@@ -315,6 +318,24 @@ namespace edn {
             free(tmpYt);
 
             return;
+        };
+
+        bool calculateDensity(const int16_t &evtX, const int16_t &evtY, const int64_t evtTimestamp) {
+            uint32_t index = evtX * sizeY + evtY;
+            if (evtTimestamp - lastTimestamp < 0) {
+                lastTimestamp = evtTimestamp;
+            } else if (evtTimestamp - lastTimestamp >= samplarT) {
+                updateStateSpace(Xt, Yt, Ut);
+                fastDericheBlur(Yt);
+                lastTimestamp = evtTimestamp;
+            }
+
+            Ut[index] += 1;
+            if (Yt[index] + Ut[index] > exp(threshold)) {
+                return true;
+            }
+
+            return false;
         };
     };
 

@@ -37,8 +37,6 @@ namespace kdv {
                 auto rect = rankedRect[i].second;
                 if (i > maxRectNum)
                     break;
-                if (rect.area() < minRectArea)
-                    continue;
                 cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
                 cv::rectangle(frame, rect.tl(), rect.br(), color, lineWidth);
             }
@@ -71,9 +69,9 @@ namespace kdv {
             config.add("negativeColor", dv::ConfigOption::stringOption("Negative (OFF) event color in hex format #RRGGBB.", "00FF00", 6, 6));
             config.add("lineWidth", dv::ConfigOption::intOption("Max rectangle number.", 2, 1, 5));
 
-            config.add("maxRectNum", dv::ConfigOption::intOption("Max rectangle number.", 20, 1, 1000));
-            config.add("minRectArea", dv::ConfigOption::intOption("Min rectangle area.", 5, 1, 1000));
-            config.add("threshold", dv::ConfigOption::floatOption("Threhold.", 0.9, 0.0, 1.0));
+            config.add("maxRectNum", dv::ConfigOption::intOption("Max rectangle number.", 5, 1, 10));
+            config.add("minRectArea", dv::ConfigOption::intOption("Min rectangle area.", 10, 1, 100));
+            config.add("threshold", dv::ConfigOption::floatOption("Threshold.", 0.85, 0.0, 1.0));
             config.setPriorityOptions({"maxRectNum", "minRectArea", "threshold"});
         };
 
@@ -83,8 +81,7 @@ namespace kdv {
             _LENGTH_ = sizeX * sizeY;
 
             slicer.doEveryTimeInterval(std::chrono::milliseconds{static_cast<int64_t>(1000.0f / 30.0f)},
-                                       std::function<void(const dv::EventStore &)>(
-                                           std::bind(&SelectiveDetector::renderFrame, this, std::placeholders::_1)));
+                                       std::function<void(const dv::EventStore &)>(std::bind(&SelectiveDetector::renderFrame, this, std::placeholders::_1)));
 
             frame = cv::Mat{inputs.getEventInput("events").size(), CV_8UC3};
 

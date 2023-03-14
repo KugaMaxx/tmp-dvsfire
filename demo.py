@@ -23,7 +23,7 @@ model = edn.reclusive_event_denoisor(data['size'][0], data['size'][1]) # nThres,
 
 
 
-idx = model.run(data['events'])
+idx = model.run(data['events'], samplarT=-0.5, sigmaT=5, sigmaS=2)
 print(data['events'].shape)
 data['events'] = data['events'][idx]
 print(idx.sum())

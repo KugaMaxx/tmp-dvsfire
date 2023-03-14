@@ -18,7 +18,7 @@ namespace kdv {
         cv::Vec3b positiveColor;
         cv::Vec3b negativeColor;
         int8_t lineWidth = 2;
-        int64_t lastTimestamp{0};
+        float_t lastTimestamp{0};
 
         void renderFrame(const dv::EventStore &inEvent) {
             frame = backgroundColor;

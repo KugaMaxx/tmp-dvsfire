@@ -53,7 +53,7 @@ namespace kpy {
 
 }
 
-PYBIND11_MODULE(event_denoisor, m) {
+PYBIND11_MODULE(reclusive_event_denoisor, m) {
     py::class_<kpy::ReclusiveEventDenoisor>(m, "reclusive_event_denoisor")
         .def(py::init<int16_t, int16_t>())
         .def("run", &kpy::ReclusiveEventDenoisor::run, py::arg("input"), py::arg("samplarT") = -0.3, py::arg("sigmaS") = 1.0, py::arg("sigmaT") = -0.5, py::arg("threshold") = 0.5);

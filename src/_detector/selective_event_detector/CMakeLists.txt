@@ -1,9 +1,9 @@
 # Compile module to dv runtime
-add_library(selective_detector SHARED module_dv.cpp)
-set_target_properties(selective_detector PROPERTIES PREFIX "Kuga_")
-target_link_libraries(selective_detector PUBLIC ${OpenCV_LIBRARIES} dv::sdk pybind11::module)
-install(TARGETS selective_detector DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+add_library(m_selective_event_detector SHARED module_dv.cpp)
+set_target_properties(m_selective_event_detector PROPERTIES PREFIX "K")
+target_link_libraries(m_selective_event_detector PUBLIC ${OpenCV_LIBRARIES} dv::sdk pybind11::module)
+install(TARGETS m_selective_event_detector DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # Convert module to python package
-pybind11_add_module(event_detector module_py.cpp)
-target_link_libraries(event_detector PUBLIC ${OpenCV_LIBRARIES} dv::sdk pybind11::module)
+pybind11_add_module(selective_event_detector module_py.cpp)
+target_link_libraries(selective_event_detector PUBLIC ${OpenCV_LIBRARIES} dv::sdk pybind11::module)

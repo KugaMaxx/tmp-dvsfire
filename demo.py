@@ -6,8 +6,8 @@ from evtool.dvs import DvsFile
 from evtool.utils import Player
 
 from modules import kore
-from modules import event_denoisor as edn
-from modules import event_detector as edt
+from modules import reclusive_event_denoisor as edn
+from modules import selective_event_detector as edt
 
 import matplotlib.pyplot as plt
 

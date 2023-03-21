@@ -10,11 +10,6 @@
 
 #include <cblas.h>
 #include <dv-sdk/module.hpp>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-
-namespace py = pybind11;
 
 namespace edn {
 

@@ -26,3 +26,4 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Compile modules
 add_subdirectory(src)
+

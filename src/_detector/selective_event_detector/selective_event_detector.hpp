@@ -10,11 +10,6 @@
 #include <dv-sdk/module.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-
-namespace py = pybind11;
 
 namespace edt {
 

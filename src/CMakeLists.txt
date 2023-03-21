@@ -1,2 +1,2 @@
-add_subdirectory(_filter)
+add_subdirectory(_denoisor)
 add_subdirectory(_detector)

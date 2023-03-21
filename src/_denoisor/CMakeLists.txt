@@ -1,2 +1,2 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-add_subdirectory(selective_event_detector)
+add_subdirectory(reclusive_event_denoisor)

@@ -15,7 +15,7 @@ namespace kore {
         int16_t x_;
         bool polarity_;
 
-        Event() {}
+        Event() : x_(0), y_(0), timestamp_(0), polarity_(false) {}
         Event(const int64_t timestamp, const int16_t y, const int16_t x, const int8_t polarity) : timestamp_(timestamp), y_(y), x_(x), polarity_(polarity) {}
 
         int64_t timestamp() const {

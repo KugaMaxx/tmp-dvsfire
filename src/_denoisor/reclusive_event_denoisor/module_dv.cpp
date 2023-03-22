@@ -17,12 +17,12 @@ namespace kdv {
         };
 
         static void initConfigOptions(dv::RuntimeConfig &config) {
-            config.add("samplarT", dv::ConfigOption::floatOption("Log scale to slice event stream.", -0.3, -1.0, 2.0));
             config.add("sigmaS", dv::ConfigOption::floatOption("Spatial blur coefficient.", 1.0, 0.1, 3.0));
             config.add("sigmaT", dv::ConfigOption::intOption("Time sigma.", 1, 1, 5));
+            config.add("samplarT", dv::ConfigOption::floatOption("Log scale to slice event stream.", -0.3, -1.0, 2.0));
             config.add("threshold", dv::ConfigOption::floatOption("Threshold value.", 0.5, -1.0, 3.0));
 
-            config.setPriorityOptions({"samplarT", "sigmaT", "sigmaS", "threshold"});
+            config.setPriorityOptions({"sigmaT", "sigmaS", "samplarT", "threshold"});
         };
 
         ReclusiveEventDenoisor() {
@@ -51,7 +51,7 @@ namespace kdv {
             }
 
             for (auto &evt : inEvent) {
-                bool isNoise = calculateDensity(evt.x(), evt.y(), evt.timestamp());
+                bool isNoise = calculateDensity(evt.x(), evt.y(), evt.timestamp(), evt.polarity());
 
                 if (isNoise) {
                     outEvent << evt;
@@ -61,9 +61,9 @@ namespace kdv {
         };
 
         void configUpdate() override {
-            samplarT  = config.getFloat("samplarT");
             sigmaS    = config.getFloat("sigmaS");
             sigmaT    = config.getInt("sigmaT");
+            samplarT  = config.getFloat("samplarT");
             threshold = config.getFloat("threshold");
             setCoefficient();
         };

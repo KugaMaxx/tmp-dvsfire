@@ -18,7 +18,7 @@ data = DvsFile.load('./data/demo/aedat/s04_v05_c001.aedat4')
 # data['events'] = data['events'][idx]
 
 # st = time.time()
-model = edn.reclusive_event_denoisor(data['size'][0], data['size'][1]) # nThres, sigmaT, sigmaS
+model = edn.init(data['size'][0], data['size'][1]) # nThres, sigmaT, sigmaS
 # print(idx.sum())
 
 
@@ -30,7 +30,7 @@ print(idx.sum())
 
 # fig, (ax1, ax2) = plt.subplots(1, 2)
 
-detector = edt.selective_detector(data['size'][0], data['size'][1])
+detector = edt.init(data['size'][0], data['size'][1])
 for ts, ev in data['events'].slice('25ms'):
     rects = detector.run(ev, threshold=0.8)
 

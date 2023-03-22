@@ -47,7 +47,7 @@ namespace kpy {
 }
 
 PYBIND11_MODULE(selective_event_detector, m) {
-    py::class_<kpy::SelectiveDetector>(m, "selective_detector")
+    py::class_<kpy::SelectiveDetector>(m, "init", pybind11::module_local())
         .def(py::init<int16_t, int16_t>())
         .def("run", &kpy::SelectiveDetector::run, py::arg("input"), py::arg("num") = 5, py::arg("area") = 10, py::arg("threshold") = 0.85);
 }

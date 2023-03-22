@@ -20,10 +20,10 @@ namespace kpy {
             free(Ut);
         }
 
-        py::array_t<bool> run(const kore::EventPybind &input, const float_t samplarT_, const float_t sigmaS_, const float_t sigmaT_, const float_t threshold_) {
-            samplarT  = samplarT_;
+        py::array_t<bool> run(const kore::EventPybind &input, const float_t sigmaS_, const float_t sigmaT_, const float_t samplarT_, const float_t threshold_) {
             sigmaS    = sigmaS_;
             sigmaT    = sigmaT_;
+            samplarT  = samplarT_;
             threshold = threshold_;
 
             py::buffer_info buf = input.request();
@@ -38,7 +38,7 @@ namespace kpy {
             std::vector<bool> vec;
             vec.reserve(inEvent.size());
             for (auto &evt : inEvent) {
-                bool isNoise = calculateDensity(evt.x(), evt.y(), evt.timestamp());
+                bool isNoise = calculateDensity(evt.x(), evt.y(), evt.timestamp(), evt.polarity());
 
                 if (isNoise) {
                     vec.push_back(true);
@@ -54,7 +54,7 @@ namespace kpy {
 }
 
 PYBIND11_MODULE(reclusive_event_denoisor, m) {
-    py::class_<kpy::ReclusiveEventDenoisor>(m, "reclusive_event_denoisor")
+    py::class_<kpy::ReclusiveEventDenoisor>(m, "init", py::module_local())
         .def(py::init<int16_t, int16_t>())
-        .def("run", &kpy::ReclusiveEventDenoisor::run, py::arg("input"), py::arg("samplarT") = -0.3, py::arg("sigmaS") = 1.0, py::arg("sigmaT") = -0.5, py::arg("threshold") = 0.5);
+        .def("run", &kpy::ReclusiveEventDenoisor::run, py::arg("input"), py::arg("sigmaS") = 1.0, py::arg("sigmaT") = -0.5, py::arg("samplarT") = -0.3, py::arg("threshold") = 0.5);
 }

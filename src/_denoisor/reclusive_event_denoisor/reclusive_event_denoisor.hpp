@@ -17,6 +17,7 @@ namespace edn {
     public:
         float_t sigmaS;
         int16_t sigmaT;
+        float_t samplarT;
         float_t threshold;
 
         static const size_t _POLES_  = 4;
@@ -28,7 +29,6 @@ namespace edn {
 
         int64_t lastTimestamp{INT64_MAX};
         int64_t sampleTimestamp;
-        float_t samplarT;
 
         float_t A[_POLES_ * _POLES_]     = {0}; // _POLES_ * _POLES_
         float_t B[_POLES_ * 1]           = {0}; // _POLES_ * 1
@@ -339,7 +339,7 @@ namespace edn {
             return;
         };
 
-        bool calculateDensity(const int16_t &evtX, const int16_t &evtY, const int64_t evtTimestamp) {
+        bool calculateDensity(const int16_t &evtX, const int16_t &evtY, const int64_t &evtTimestamp, const bool &evtPolarity) {
             uint32_t index = evtX * sizeY + evtY;
             if (evtTimestamp - lastTimestamp < 0) {
                 lastTimestamp = evtTimestamp;

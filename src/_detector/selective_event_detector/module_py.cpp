@@ -32,10 +32,8 @@ namespace kpy {
             auto rankedRect = selectiveBoundingBox();
 
             std::vector<py::array_t<int32_t>> result;
-            for (size_t i = 0; i < rankedRect.size(); i++) {
+            for (size_t i = 0; i < rankedRect.size() && i < maxRectNum; i++) {
                 auto rect = rankedRect[i].second;
-                if (i > maxRectNum)
-                    break;
                 std::vector<int32_t> vect = {rect.x, rect.y, rect.width, rect.height};
                 result.push_back(py::cast(vect));
             }

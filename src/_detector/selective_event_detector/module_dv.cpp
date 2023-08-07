@@ -33,10 +33,8 @@ namespace kdv {
             auto rankedRect = selectiveBoundingBox();
 
             cv::RNG_MT19937 rng(1225);
-            for (size_t i = 0; i < rankedRect.size(); i++) {
+            for (size_t i = 0; i < rankedRect.size() && i < maxRectNum; i++) {
                 auto rect = rankedRect[i].second;
-                if (i > maxRectNum)
-                    break;
                 cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
                 cv::rectangle(frame, rect.tl(), rect.br(), color, lineWidth);
             }
@@ -64,14 +62,15 @@ namespace kdv {
         }
 
         static void initConfigOptions(dv::RuntimeConfig &config) {
+            config.add("maxRectNum", dv::ConfigOption::intOption("Max rectangle number.", 1, 1, 10));
+            config.add("minRectArea", dv::ConfigOption::intOption("Min rectangle area.", 10, 1, 100));
+            config.add("threshold", dv::ConfigOption::floatOption("Threshold.", 0.85, 0.0, 1.0));
+
             config.add("backgroundColor", dv::ConfigOption::stringOption("Background color in hex format #RRGGBB.", "000000", 6, 6));
             config.add("positiveColor", dv::ConfigOption::stringOption("Positive (ON) event color in hex format #RRGGBB.", "FF0000", 6, 6));
             config.add("negativeColor", dv::ConfigOption::stringOption("Negative (OFF) event color in hex format #RRGGBB.", "00FF00", 6, 6));
             config.add("lineWidth", dv::ConfigOption::intOption("Max rectangle number.", 2, 1, 5));
 
-            config.add("maxRectNum", dv::ConfigOption::intOption("Max rectangle number.", 5, 1, 10));
-            config.add("minRectArea", dv::ConfigOption::intOption("Min rectangle area.", 10, 1, 100));
-            config.add("threshold", dv::ConfigOption::floatOption("Threshold.", 0.85, 0.0, 1.0));
             config.setPriorityOptions({"maxRectNum", "minRectArea", "threshold"});
         };
 
